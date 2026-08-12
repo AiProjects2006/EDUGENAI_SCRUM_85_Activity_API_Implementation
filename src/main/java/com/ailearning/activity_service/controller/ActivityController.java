@@ -3,14 +3,15 @@ package com.ailearning.activity_service.controller;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
 import com.ailearning.activity_service.dto.response.ActivityGenerationResponse;
+import com.ailearning.activity_service.dto.response.ActivityHistoryDetailResponse;
+import com.ailearning.activity_service.dto.response.ActivityHistoryResponse;
 import com.ailearning.activity_service.dto.response.ActivitySubmissionResponse;
 import com.ailearning.activity_service.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/activities")
@@ -37,5 +38,29 @@ public class ActivityController {
                 activityService.submitActivity(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<ActivityHistoryResponse>> getActivityHistory() {
+
+        Long studentId = 1L; // temporary until authentication is connected
+
+        return ResponseEntity.ok(
+                activityService.getActivityHistory(studentId)
+        );
+    }
+
+    @GetMapping("/history/{id}")
+    public ResponseEntity<ActivityHistoryDetailResponse> getActivityHistoryById(
+            @PathVariable Long id) {
+
+        Long studentId = 1L; // temporary until authentication is connected
+
+        return ResponseEntity.ok(
+                activityService.getActivityHistoryById(
+                        studentId,
+                        id
+                )
+        );
     }
 }

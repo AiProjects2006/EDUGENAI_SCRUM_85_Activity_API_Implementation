@@ -3,15 +3,13 @@ package com.ailearning.activity_service.service.impl;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
 import com.ailearning.activity_service.dto.request.AnswerRequest;
-import com.ailearning.activity_service.dto.response.ActivityGenerationResponse;
-import com.ailearning.activity_service.dto.response.ActivitySubmissionResponse;
-import com.ailearning.activity_service.dto.response.OptionResponse;
-import com.ailearning.activity_service.dto.response.QuestionResponse;
+import com.ailearning.activity_service.dto.response.*;
 import com.ailearning.activity_service.entity.AttemptQuestion;
 import com.ailearning.activity_service.entity.StudentActivityAttempt;
 import com.ailearning.activity_service.enums.ActivitySource;
 import com.ailearning.activity_service.enums.AttemptStatus;
 import com.ailearning.activity_service.enums.GradeLevel;
+import com.ailearning.activity_service.exception.ResourceNotFoundException;
 import com.ailearning.activity_service.repository.StudentActivityAttemptRepository;
 import com.ailearning.activity_service.service.ActivityService;
 import lombok.RequiredArgsConstructor;
@@ -88,7 +86,7 @@ public class ActivityServiceImpl implements ActivityService {
             ActivitySubmissionRequest request) {
 
         StudentActivityAttempt attempt = StudentActivityAttempt.builder()
-                .studentId(1L) // temporary
+                .studentId(1L)    // TODO: Replace with authenticated student ID
                 .source(ActivitySource.AI)
                 .activityId(request.getActivityId())
                 .startedAt(LocalDateTime.now())
@@ -138,6 +136,75 @@ public class ActivityServiceImpl implements ActivityService {
                 .message("Activity submitted successfully.")
                 .analysisStatus("PENDING")
                 .activitySaved(true)
+                .build();
+    }
+
+    @Override
+    public List<ActivityHistoryResponse> getActivityHistory(Long studentId) {
+
+        List<StudentActivityAttempt> attempts =
+                studentActivityAttemptRepository
+                        .findByStudentIdOrderBySubmittedAtDesc(studentId);
+
+        return attempts.stream()
+                .map(attempt -> ActivityHistoryResponse.builder()
+                        .attemptId(attempt.getAttemptId())
+                        .source(attempt.getSource())
+                        .activityId(attempt.getActivityId())
+                        .startedAt(attempt.getStartedAt())
+                        .submittedAt(attempt.getSubmittedAt())
+                        .status(attempt.getStatus())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public ActivityHistoryDetailResponse getActivityHistoryById(
+            Long studentId,
+            Long attemptId) {
+
+        StudentActivityAttempt attempt =
+                studentActivityAttemptRepository
+                        .findByAttemptIdAndStudentId(
+                                attemptId,
+                                studentId
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Activity attempt not found"
+                                ));
+
+        List<AttemptQuestionResponse> questions =
+                attempt.getQuestions()
+                        .stream()
+                        .map(question -> AttemptQuestionResponse.builder()
+                                .attemptQuestionId(
+                                        question.getAttemptQuestionId())
+                                .questionType(
+                                        question.getQuestionType())
+                                .questionText(
+                                        question.getQuestionText())
+                                .instructions(
+                                        question.getInstructions())
+                                .studentAnswer(
+                                        question.getStudentAnswer())
+                                .correctAnswer(
+                                        question.getCorrectAnswer())
+                                .isCorrect(
+                                        question.getIsCorrect())
+                                .feedback(
+                                        question.getFeedback())
+                                .build())
+                        .toList();
+
+        return ActivityHistoryDetailResponse.builder()
+                .attemptId(attempt.getAttemptId())
+                .source(attempt.getSource())
+                .activityId(attempt.getActivityId())
+                .startedAt(attempt.getStartedAt())
+                .submittedAt(attempt.getSubmittedAt())
+                .status(attempt.getStatus())
+                .questions(questions)
                 .build();
     }
 
