@@ -1,9 +1,16 @@
 package com.ailearning.activity_service.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "attempt_questions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class AttemptQuestion {
 
     @Id
@@ -11,7 +18,7 @@ public class AttemptQuestion {
     private Long attemptQuestionId;
 
     @ManyToOne
-    @JoinColumn(name = "attempt_id")
+    @JoinColumn(name = "attempt_id", nullable = false)
     private StudentActivityAttempt attempt;
 
     private String questionType;

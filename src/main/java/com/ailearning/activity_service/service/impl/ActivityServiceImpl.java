@@ -1,19 +1,32 @@
 package com.ailearning.activity_service.service.impl;
 
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
+import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
+import com.ailearning.activity_service.dto.request.AnswerRequest;
 import com.ailearning.activity_service.dto.response.ActivityGenerationResponse;
+import com.ailearning.activity_service.dto.response.ActivitySubmissionResponse;
 import com.ailearning.activity_service.dto.response.OptionResponse;
 import com.ailearning.activity_service.dto.response.QuestionResponse;
+import com.ailearning.activity_service.entity.AttemptQuestion;
+import com.ailearning.activity_service.entity.StudentActivityAttempt;
+import com.ailearning.activity_service.enums.ActivitySource;
+import com.ailearning.activity_service.enums.AttemptStatus;
 import com.ailearning.activity_service.enums.GradeLevel;
+import com.ailearning.activity_service.repository.StudentActivityAttemptRepository;
 import com.ailearning.activity_service.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
+
+    private final StudentActivityAttemptRepository
+            studentActivityAttemptRepository;
 
     @Override
     public ActivityGenerationResponse generateActivity(ActivityGenerationRequest request) {
@@ -69,4 +82,63 @@ public class ActivityServiceImpl implements ActivityService {
         // 4. Return AI response
         return response;
     }
+
+    @Override
+    public ActivitySubmissionResponse submitActivity(
+            ActivitySubmissionRequest request) {
+
+        StudentActivityAttempt attempt = StudentActivityAttempt.builder()
+                .studentId(1L) // temporary
+                .source(ActivitySource.AI)
+                .activityId(request.getActivityId())
+                .startedAt(LocalDateTime.now())
+                .submittedAt(LocalDateTime.now())
+                .status(AttemptStatus.SUBMITTED)
+                .build();
+
+        List<AttemptQuestion> attemptQuestions = new ArrayList<>();
+
+        for (AnswerRequest answer : request.getAnswers()) {
+
+            QuestionResponse question = request.getGeneratedActivity()
+                    .getQuestions()
+                    .stream()
+                    .filter(q -> q.getDisplayOrder()
+                            .equals(answer.getQuestionNumber()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (question == null) {
+                continue;
+            }
+
+            AttemptQuestion attemptQuestion = AttemptQuestion.builder()
+                    .attempt(attempt)
+                    .questionType(
+                            request.getGeneratedActivity()
+                                    .getActivityType()
+                                    .name()
+                    )
+                    .questionText(question.getQuestionText())
+                    .instructions(question.getInstruction())
+                    .studentAnswer(answer.getStudentAnswer())
+                    .correctAnswer(null)
+                    .isCorrect(null)
+                    .feedback(null)
+                    .build();
+
+            attemptQuestions.add(attemptQuestion);
+        }
+
+        attempt.setQuestions(attemptQuestions);
+
+        studentActivityAttemptRepository.save(attempt);
+
+        return ActivitySubmissionResponse.builder()
+                .message("Activity submitted successfully.")
+                .analysisStatus("PENDING")
+                .activitySaved(true)
+                .build();
+    }
+
 }

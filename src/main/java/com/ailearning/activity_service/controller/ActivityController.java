@@ -1,7 +1,9 @@
 package com.ailearning.activity_service.controller;
 
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
+import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
 import com.ailearning.activity_service.dto.response.ActivityGenerationResponse;
+import com.ailearning.activity_service.dto.response.ActivitySubmissionResponse;
 import com.ailearning.activity_service.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,16 @@ public class ActivityController {
 
         ActivityGenerationResponse response =
                 activityService.generateActivity(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<ActivitySubmissionResponse> submitActivity(
+            @RequestBody ActivitySubmissionRequest request) {
+
+        ActivitySubmissionResponse response =
+                activityService.submitActivity(request);
 
         return ResponseEntity.ok(response);
     }
