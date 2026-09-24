@@ -1,13 +1,14 @@
 package com.ailearning.activity_service.controller;
 
+import com.ailearning.activity_service.dto.request.ActivityCreateRequest;
+import com.ailearning.activity_service.dto.response.ActivityCreateResponse;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
-import com.ailearning.activity_service.dto.response.ActivityGenerationResponse;
-import com.ailearning.activity_service.dto.response.ActivityHistoryDetailResponse;
-import com.ailearning.activity_service.dto.response.ActivityHistoryResponse;
-import com.ailearning.activity_service.dto.response.ActivitySubmissionResponse;
+import com.ailearning.activity_service.dto.response.*;
 import com.ailearning.activity_service.service.ActivityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,18 @@ public class ActivityController {
                 activityService.submitActivity(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    public ResponseEntity<ActivityCreateResponse> createActivity(
+            @Valid @RequestBody ActivityCreateRequest request) {
+
+        ActivityCreateResponse response =
+                activityService.createActivity(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping("/history")

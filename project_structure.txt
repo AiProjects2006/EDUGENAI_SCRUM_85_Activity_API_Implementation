@@ -1,0 +1,213 @@
+Folder PATH listing
+Volume serial number is FC93-8761
+C:.
+|   .gitattributes
+|   .gitignore
+|   HELP.md
+|   mvnw
+|   mvnw.cmd
+|   pom.xml
+|   project_structure.txt
+|   
++---.idea
+|       .gitignore
+|       compiler.xml
+|       encodings.xml
+|       jarRepositories.xml
+|       misc.xml
+|       vcs.xml
+|       workspace.xml
+|       
++---.mvn
+|   \---wrapper
+|           maven-wrapper.properties
+|           
++---src
+|   +---main
+|   |   +---java
+|   |   |   \---com
+|   |   |       \---ailearning
+|   |   |           \---activity_service
+|   |   |               |   ActivityServiceApplication.java
+|   |   |               |   
+|   |   |               +---client
+|   |   |               +---config
+|   |   |               +---controller
+|   |   |               |       ActivityController.java
+|   |   |               |       
+|   |   |               +---dto
+|   |   |               |   +---request
+|   |   |               |   |       ActivityGenerationRequest.java
+|   |   |               |   |       ActivitySubmissionRequest.java
+|   |   |               |   |       AnswerRequest.java
+|   |   |               |   |       
+|   |   |               |   \---response
+|   |   |               |           ActivityGenerationResponse.java
+|   |   |               |           ActivityHistoryDetailResponse.java
+|   |   |               |           ActivityHistoryResponse.java
+|   |   |               |           ActivitySubmissionResponse.java
+|   |   |               |           AttemptQuestionResponse.java
+|   |   |               |           OptionResponse.java
+|   |   |               |           QuestionResponse.java
+|   |   |               |           
+|   |   |               +---entity
+|   |   |               |       Activity.java
+|   |   |               |       AttemptQuestion.java
+|   |   |               |       DragItem.java
+|   |   |               |       DragMapping.java
+|   |   |               |       DropZone.java
+|   |   |               |       Essay.java
+|   |   |               |       FillBlank.java
+|   |   |               |       HotspotRegion.java
+|   |   |               |       MatchingPair.java
+|   |   |               |       Option.java
+|   |   |               |       Question.java
+|   |   |               |       SortingItem.java
+|   |   |               |       StudentActivityAttempt.java
+|   |   |               |       
+|   |   |               +---enums
+|   |   |               |       ActivitySource.java
+|   |   |               |       ActivityStatus.java
+|   |   |               |       ActivityType.java
+|   |   |               |       AttemptStatus.java
+|   |   |               |       DifficultyLevel.java
+|   |   |               |       GradeLevel.java
+|   |   |               |       
+|   |   |               +---exception
+|   |   |               |       ResourceNotFoundException.java
+|   |   |               |       
+|   |   |               +---mapper
+|   |   |               +---model
+|   |   |               +---repository
+|   |   |               |       StudentActivityAttemptRepository.java
+|   |   |               |       
+|   |   |               +---service
+|   |   |               |   |   ActivityService.java
+|   |   |               |   |   
+|   |   |               |   \---impl
+|   |   |               |           ActivityServiceImpl.java
+|   |   |               |           
+|   |   |               \---util
+|   |   \---resources
+|   |       |   application.properties
+|   |       |   
+|   |       +---static
+|   |       \---templates
+|   \---test
+|       \---java
+|           \---com
+|               \---ailearning
+|                   \---activity_service
+|                           ActivityServiceApplicationTests.java
+|                           
+\---target
+    +---classes
+    |   |   application.properties
+    |   |   
+    |   \---com
+    |       \---ailearning
+    |           \---activity_service
+    |               |   ActivityServiceApplication.class
+    |               |   
+    |               +---controller
+    |               |       ActivityController.class
+    |               |       
+    |               +---dto
+    |               |   +---request
+    |               |   |       ActivityGenerationRequest$ActivityGenerationRequestBuilder.class
+    |               |   |       ActivityGenerationRequest.class
+    |               |   |       ActivitySubmissionRequest$ActivitySubmissionRequestBuilder.class
+    |               |   |       ActivitySubmissionRequest.class
+    |               |   |       AnswerRequest$AnswerRequestBuilder.class
+    |               |   |       AnswerRequest.class
+    |               |   |       
+    |               |   \---response
+    |               |           ActivityGenerationResponse$ActivityGenerationResponseBuilder.class
+    |               |           ActivityGenerationResponse.class
+    |               |           ActivityHistoryDetailResponse$ActivityHistoryDetailResponseBuilder.class
+    |               |           ActivityHistoryDetailResponse.class
+    |               |           ActivityHistoryResponse$ActivityHistoryResponseBuilder.class
+    |               |           ActivityHistoryResponse.class
+    |               |           ActivitySubmissionResponse$ActivitySubmissionResponseBuilder.class
+    |               |           ActivitySubmissionResponse.class
+    |               |           AttemptQuestionResponse$AttemptQuestionResponseBuilder.class
+    |               |           AttemptQuestionResponse.class
+    |               |           OptionResponse$OptionResponseBuilder.class
+    |               |           OptionResponse.class
+    |               |           QuestionResponse$QuestionResponseBuilder.class
+    |               |           QuestionResponse.class
+    |               |           
+    |               +---entity
+    |               |       Activity$ActivityBuilder.class
+    |               |       Activity.class
+    |               |       AttemptQuestion$AttemptQuestionBuilder.class
+    |               |       AttemptQuestion.class
+    |               |       DragItem$DragItemBuilder.class
+    |               |       DragItem.class
+    |               |       DragMapping$DragMappingBuilder.class
+    |               |       DragMapping.class
+    |               |       DropZone$DropZoneBuilder.class
+    |               |       DropZone.class
+    |               |       Essay$EssayBuilder.class
+    |               |       Essay.class
+    |               |       FillBlank$FillBlankBuilder.class
+    |               |       FillBlank.class
+    |               |       HotspotRegion$HotspotRegionBuilder.class
+    |               |       HotspotRegion.class
+    |               |       MatchingPair$MatchingPairBuilder.class
+    |               |       MatchingPair.class
+    |               |       Option$OptionBuilder.class
+    |               |       Option.class
+    |               |       Question$QuestionBuilder.class
+    |               |       Question.class
+    |               |       SortingItem$SortingItemBuilder.class
+    |               |       SortingItem.class
+    |               |       StudentActivityAttempt$StudentActivityAttemptBuilder.class
+    |               |       StudentActivityAttempt.class
+    |               |       
+    |               +---enums
+    |               |       ActivitySource.class
+    |               |       ActivityStatus.class
+    |               |       ActivityType.class
+    |               |       AttemptStatus.class
+    |               |       DifficultyLevel.class
+    |               |       GradeLevel.class
+    |               |       
+    |               +---exception
+    |               |       ResourceNotFoundException.class
+    |               |       
+    |               +---repository
+    |               |       StudentActivityAttemptRepository.class
+    |               |       
+    |               \---service
+    |                   |   ActivityService.class
+    |                   |   
+    |                   \---impl
+    |                           ActivityServiceImpl.class
+    |                           
+    +---generated-sources
+    |   \---annotations
+    +---generated-test-sources
+    |   \---test-annotations
+    +---maven-status
+    |   \---maven-compiler-plugin
+    |       +---compile
+    |       |   \---default-compile
+    |       |           createdFiles.lst
+    |       |           inputFiles.lst
+    |       |           
+    |       \---testCompile
+    |           \---default-testCompile
+    |                   createdFiles.lst
+    |                   inputFiles.lst
+    |                   
+    +---surefire-reports
+    |       com.ailearning.activity_service.ActivityServiceApplicationTests.txt
+    |       TEST-com.ailearning.activity_service.ActivityServiceApplicationTests.xml
+    |       
+    \---test-classes
+        \---com
+            \---ailearning
+                \---activity_service
+                        ActivityServiceApplicationTests.class
+                        

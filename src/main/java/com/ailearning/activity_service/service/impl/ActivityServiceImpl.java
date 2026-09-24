@@ -1,17 +1,24 @@
 package com.ailearning.activity_service.service.impl;
 
-import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
-import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
-import com.ailearning.activity_service.dto.request.AnswerRequest;
+import com.ailearning.activity_service.dto.request.*;
 import com.ailearning.activity_service.dto.response.*;
-import com.ailearning.activity_service.entity.AttemptQuestion;
-import com.ailearning.activity_service.entity.StudentActivityAttempt;
+import com.ailearning.activity_service.dto.request.ActivityCreateRequest;
+import com.ailearning.activity_service.dto.request.OptionCreateRequest;
+import com.ailearning.activity_service.dto.request.QuestionCreateRequest;
+import com.ailearning.activity_service.dto.response.ActivityCreateResponse;
+import com.ailearning.activity_service.entity.*;
+import com.ailearning.activity_service.entity.Activity;
+import com.ailearning.activity_service.entity.Option;
+import com.ailearning.activity_service.entity.Question;
 import com.ailearning.activity_service.enums.ActivitySource;
+import com.ailearning.activity_service.enums.ActivityStatus;
 import com.ailearning.activity_service.enums.AttemptStatus;
 import com.ailearning.activity_service.enums.GradeLevel;
 import com.ailearning.activity_service.exception.ResourceNotFoundException;
+import com.ailearning.activity_service.repository.ActivityRepository;
 import com.ailearning.activity_service.repository.StudentActivityAttemptRepository;
 import com.ailearning.activity_service.service.ActivityService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +32,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final StudentActivityAttemptRepository
             studentActivityAttemptRepository;
+
+    private final ActivityRepository activityRepository;
 
     @Override
     public ActivityGenerationResponse generateActivity(ActivityGenerationRequest request) {
@@ -206,6 +215,66 @@ public class ActivityServiceImpl implements ActivityService {
                 .status(attempt.getStatus())
                 .questions(questions)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public ActivityCreateResponse createActivity(
+            ActivityCreateRequest request) {
+
+        Activity activity = Activity.builder()
+                .moduleId(request.moduleId())
+                .gradeLevel(request.gradeLevel())
+                .displayOrder(request.displayOrder())
+                .title(request.title())
+                .description(request.description())
+                .activityType(request.activityType())
+                .difficulty(request.difficulty())
+                .timeLimitMinutes(request.timeLimitMinutes())
+                .totalMarks(0)
+                .status(ActivityStatus.DRAFT)
+                .build();
+
+        int totalMarks = 0;
+
+        for (QuestionCreateRequest questionRequest : request.questions()) {
+
+            Question question = Question.builder()
+                    .activity(activity)
+                    .questionText(questionRequest.questionText())
+                    .instructions(questionRequest.instructions())
+                    .imageUrl(questionRequest.imageUrl())
+                    .points(questionRequest.points())
+                    .displayOrder(questionRequest.displayOrder())
+                    .build();
+
+            for (OptionCreateRequest optionRequest :
+                    questionRequest.options()) {
+
+                Option option = Option.builder()
+                        .question(question)
+                        .optionText(optionRequest.optionText())
+                        .correct(optionRequest.correct())
+                        .displayOrder(optionRequest.displayOrder())
+                        .build();
+
+                question.getOptions().add(option);
+            }
+
+            activity.getQuestions().add(question);
+
+            totalMarks += questionRequest.points();
+        }
+
+        activity.setTotalMarks(totalMarks);
+
+        Activity savedActivity =
+                activityRepository.save(activity);
+
+        return new ActivityCreateResponse(
+                savedActivity.getActivityId(),
+                "Activity created successfully"
+        );
     }
 
 }
