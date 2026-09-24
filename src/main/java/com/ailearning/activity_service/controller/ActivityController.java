@@ -83,4 +83,13 @@ public class ActivityController {
                 activityService.getAllActivities()
         );
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ActivityDetailResponse> getActivityById(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                activityService.getActivityById(id)
+        );
+    }
 }

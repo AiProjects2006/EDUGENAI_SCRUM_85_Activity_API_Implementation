@@ -300,4 +300,57 @@ public class ActivityServiceImpl implements ActivityService {
                 .toList();
     }
 
+    @Override
+    public ActivityDetailResponse getActivityById(Long activityId) {
+
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Activity not found with id: " + activityId
+                        ));
+
+        List<QuestionDetailResponse> questions =
+                activity.getQuestions()
+                        .stream()
+                        .map(question -> {
+
+                            List<OptionDetailResponse> options =
+                                    question.getOptions()
+                                            .stream()
+                                            .map(option -> new OptionDetailResponse(
+                                                    option.getOptionId(),
+                                                    option.getOptionText(),
+                                                    option.getCorrect(),
+                                                    option.getDisplayOrder()
+                                            ))
+                                            .toList();
+
+                            return new QuestionDetailResponse(
+                                    question.getQuestionId(),
+                                    question.getQuestionText(),
+                                    question.getInstructions(),
+                                    question.getImageUrl(),
+                                    question.getPoints(),
+                                    question.getDisplayOrder(),
+                                    options
+                            );
+                        })
+                        .toList();
+
+        return new ActivityDetailResponse(
+                activity.getActivityId(),
+                activity.getModuleId(),
+                activity.getGradeLevel(),
+                activity.getDisplayOrder(),
+                activity.getTitle(),
+                activity.getDescription(),
+                activity.getActivityType(),
+                activity.getDifficulty(),
+                activity.getTimeLimitMinutes(),
+                activity.getTotalMarks(),
+                activity.getStatus(),
+                questions
+        );
+    }
+
 }

@@ -24,4 +24,6 @@ public interface ActivityService {
 
     List<ActivityListResponse> getAllActivities();
 
+    ActivityDetailResponse getActivityById(Long activityId);
+
 }
