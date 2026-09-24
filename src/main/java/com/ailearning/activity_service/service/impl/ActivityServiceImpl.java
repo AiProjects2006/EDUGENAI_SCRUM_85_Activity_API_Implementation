@@ -277,4 +277,27 @@ public class ActivityServiceImpl implements ActivityService {
         );
     }
 
+    @Override
+    public List<ActivityListResponse> getAllActivities() {
+
+        List<Activity> activities =
+                activityRepository.findAll();
+
+        return activities.stream()
+                .map(activity -> new ActivityListResponse(
+                        activity.getActivityId(),
+                        activity.getModuleId(),
+                        activity.getGradeLevel(),
+                        activity.getDisplayOrder(),
+                        activity.getTitle(),
+                        activity.getDescription(),
+                        activity.getActivityType(),
+                        activity.getDifficulty(),
+                        activity.getTimeLimitMinutes(),
+                        activity.getTotalMarks(),
+                        activity.getStatus()
+                ))
+                .toList();
+    }
+
 }

@@ -22,4 +22,6 @@ public interface ActivityService {
 
     ActivityCreateResponse createActivity(ActivityCreateRequest request);
 
+    List<ActivityListResponse> getAllActivities();
+
 }

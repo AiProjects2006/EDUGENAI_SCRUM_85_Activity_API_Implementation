@@ -1,7 +1,6 @@
 package com.ailearning.activity_service.controller;
 
 import com.ailearning.activity_service.dto.request.ActivityCreateRequest;
-import com.ailearning.activity_service.dto.response.ActivityCreateResponse;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
 import com.ailearning.activity_service.dto.response.*;
@@ -74,6 +73,14 @@ public class ActivityController {
                         studentId,
                         id
                 )
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ActivityListResponse>> getAllActivities() {
+
+        return ResponseEntity.ok(
+                activityService.getAllActivities()
         );
     }
 }
