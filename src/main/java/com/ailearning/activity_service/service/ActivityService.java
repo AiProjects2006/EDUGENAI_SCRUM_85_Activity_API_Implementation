@@ -3,6 +3,7 @@ package com.ailearning.activity_service.service;
 import com.ailearning.activity_service.dto.request.ActivityCreateRequest;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
+import com.ailearning.activity_service.dto.request.ActivityUpdateRequest;
 import com.ailearning.activity_service.dto.response.ActivityCreateResponse;
 import com.ailearning.activity_service.dto.response.*;
 
@@ -25,5 +26,9 @@ public interface ActivityService {
     List<ActivityListResponse> getAllActivities();
 
     ActivityDetailResponse getActivityById(Long activityId);
+
+    ActivityDetailResponse updateActivity(
+            Long activityId,
+            ActivityUpdateRequest request);
 
 }

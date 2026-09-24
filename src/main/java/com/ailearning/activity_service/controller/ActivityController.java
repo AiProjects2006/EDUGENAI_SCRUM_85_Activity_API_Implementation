@@ -3,6 +3,7 @@ package com.ailearning.activity_service.controller;
 import com.ailearning.activity_service.dto.request.ActivityCreateRequest;
 import com.ailearning.activity_service.dto.request.ActivityGenerationRequest;
 import com.ailearning.activity_service.dto.request.ActivitySubmissionRequest;
+import com.ailearning.activity_service.dto.request.ActivityUpdateRequest;
 import com.ailearning.activity_service.dto.response.*;
 import com.ailearning.activity_service.service.ActivityService;
 import jakarta.validation.Valid;
@@ -90,6 +91,16 @@ public class ActivityController {
 
         return ResponseEntity.ok(
                 activityService.getActivityById(id)
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ActivityDetailResponse> updateActivity(
+            @PathVariable Long id,
+            @Valid @RequestBody ActivityUpdateRequest request) {
+
+        return ResponseEntity.ok(
+                activityService.updateActivity(id, request)
         );
     }
 }

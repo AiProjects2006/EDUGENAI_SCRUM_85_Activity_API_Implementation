@@ -353,4 +353,67 @@ public class ActivityServiceImpl implements ActivityService {
         );
     }
 
+    @Override
+    @Transactional
+    public ActivityDetailResponse updateActivity(
+            Long activityId,
+            ActivityUpdateRequest request) {
+
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Activity not found with id: " + activityId
+                        ));
+
+        activity.setModuleId(request.moduleId());
+        activity.setGradeLevel(request.gradeLevel());
+        activity.setDisplayOrder(request.displayOrder());
+        activity.setTitle(request.title());
+        activity.setDescription(request.description());
+        activity.setActivityType(request.activityType());
+        activity.setDifficulty(request.difficulty());
+        activity.setTimeLimitMinutes(request.timeLimitMinutes());
+        activity.setStatus(request.status());
+
+        activity.getQuestions().clear();
+
+        int totalMarks = 0;
+
+        for (QuestionCreateRequest questionRequest : request.questions()) {
+
+            Question question = Question.builder()
+                    .activity(activity)
+                    .questionText(questionRequest.questionText())
+                    .instructions(questionRequest.instructions())
+                    .imageUrl(questionRequest.imageUrl())
+                    .points(questionRequest.points())
+                    .displayOrder(questionRequest.displayOrder())
+                    .build();
+
+            for (OptionCreateRequest optionRequest :
+                    questionRequest.options()) {
+
+                Option option = Option.builder()
+                        .question(question)
+                        .optionText(optionRequest.optionText())
+                        .correct(optionRequest.correct())
+                        .displayOrder(optionRequest.displayOrder())
+                        .build();
+
+                question.getOptions().add(option);
+            }
+
+            activity.getQuestions().add(question);
+
+            totalMarks += questionRequest.points();
+        }
+
+        activity.setTotalMarks(totalMarks);
+
+        Activity savedActivity =
+                activityRepository.save(activity);
+
+        return getActivityById(savedActivity.getActivityId());
+    }
+
 }
