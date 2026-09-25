@@ -103,4 +103,13 @@ public class ActivityController {
                 activityService.updateActivity(id, request)
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteActivity(
+            @PathVariable Long id) {
+
+        activityService.deleteActivity(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

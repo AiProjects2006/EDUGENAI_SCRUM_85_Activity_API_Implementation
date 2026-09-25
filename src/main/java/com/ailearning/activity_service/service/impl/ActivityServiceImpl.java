@@ -416,4 +416,17 @@ public class ActivityServiceImpl implements ActivityService {
         return getActivityById(savedActivity.getActivityId());
     }
 
+    @Override
+    @Transactional
+    public void deleteActivity(Long activityId) {
+
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Activity not found with id: " + activityId
+                        ));
+
+        activityRepository.delete(activity);
+    }
+
 }

@@ -31,4 +31,6 @@ public interface ActivityService {
             Long activityId,
             ActivityUpdateRequest request);
 
+    void deleteActivity(Long activityId);
+
 }
