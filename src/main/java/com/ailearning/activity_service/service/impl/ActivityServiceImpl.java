@@ -623,6 +623,7 @@ public class ActivityServiceImpl implements ActivityService {
                                 "Activity not found with id: " + activityId
                         ));
 
+        // Update activity fields
         activity.setModuleId(request.moduleId());
         activity.setGradeLevel(request.gradeLevel());
         activity.setDisplayOrder(request.displayOrder());
@@ -633,11 +634,26 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setTimeLimitMinutes(request.timeLimitMinutes());
         activity.setStatus(request.status());
 
+        // Validate time limit for timed quizzes
+        if (request.activityType() == ActivityType.TIMED_QUIZ
+                && request.timeLimitMinutes() == null) {
+            throw new IllegalArgumentException(
+                    "Time limit is required for TIMED_QUIZ"
+            );
+        }
+
+        // Remove existing questions and their child data
         activity.getQuestions().clear();
 
         int totalMarks = 0;
 
         for (QuestionCreateRequest questionRequest : request.questions()) {
+
+            // Validate question structure
+            validateQuestionData(
+                    questionRequest,
+                    request.activityType()
+            );
 
             Question question = Question.builder()
                     .activity(activity)
@@ -648,6 +664,7 @@ public class ActivityServiceImpl implements ActivityService {
                     .displayOrder(questionRequest.displayOrder())
                     .build();
 
+            // Options
             for (OptionCreateRequest optionRequest :
                     questionRequest.options()) {
 
@@ -659,6 +676,138 @@ public class ActivityServiceImpl implements ActivityService {
                         .build();
 
                 question.getOptions().add(option);
+            }
+
+            // Fill blanks
+            for (FillBlankCreateRequest blankRequest :
+                    questionRequest.fillBlanks()) {
+
+                FillBlank fillBlank = FillBlank.builder()
+                        .question(question)
+                        .correctAnswer(blankRequest.correctAnswer())
+                        .blankIndex(blankRequest.blankIndex())
+                        .build();
+
+                question.getFillBlanks().add(fillBlank);
+            }
+
+            // Matching pairs
+            for (MatchingPairCreateRequest pairRequest :
+                    questionRequest.matchingPairs()) {
+
+                MatchingPair pair = MatchingPair.builder()
+                        .question(question)
+                        .leftItem(pairRequest.leftItem())
+                        .rightItem(pairRequest.rightItem())
+                        .displayOrder(pairRequest.displayOrder())
+                        .build();
+
+                question.getMatchingPairs().add(pair);
+            }
+
+            // Sorting items
+            for (SortingItemCreateRequest itemRequest :
+                    questionRequest.sortingItems()) {
+
+                SortingItem item = SortingItem.builder()
+                        .question(question)
+                        .itemText(itemRequest.itemText())
+                        .correctOrder(itemRequest.correctOrder())
+                        .build();
+
+                question.getSortingItems().add(item);
+            }
+
+            // Drag items
+            for (DragItemCreateRequest itemRequest :
+                    questionRequest.dragItems()) {
+
+                DragItem item = DragItem.builder()
+                        .question(question)
+                        .itemText(itemRequest.itemText())
+                        .imageUrl(itemRequest.imageUrl())
+                        .build();
+
+                question.getDragItems().add(item);
+            }
+
+            // Drop zones
+            for (DropZoneCreateRequest zoneRequest :
+                    questionRequest.dropZones()) {
+
+                DropZone zone = DropZone.builder()
+                        .question(question)
+                        .zoneLabel(zoneRequest.zoneLabel())
+                        .build();
+
+                question.getDropZones().add(zone);
+            }
+
+            // Drag mappings
+            for (DragMappingCreateRequest mappingRequest :
+                    questionRequest.dragMappings()) {
+
+                int dragItemIndex = mappingRequest.dragItemIndex();
+                int dropZoneIndex = mappingRequest.dropZoneIndex();
+
+                if (dragItemIndex < 1 ||
+                        dragItemIndex > question.getDragItems().size()) {
+                    throw new IllegalArgumentException(
+                            "Invalid drag item index: " + dragItemIndex
+                    );
+                }
+
+                if (dropZoneIndex < 1 ||
+                        dropZoneIndex > question.getDropZones().size()) {
+                    throw new IllegalArgumentException(
+                            "Invalid drop zone index: " + dropZoneIndex
+                    );
+                }
+
+                DragItem dragItem =
+                        question.getDragItems().get(dragItemIndex - 1);
+
+                DropZone dropZone =
+                        question.getDropZones().get(dropZoneIndex - 1);
+
+                DragMapping mapping = DragMapping.builder()
+                        .dragItem(dragItem)
+                        .dropZone(dropZone)
+                        .build();
+
+                dragItem.getDragMappings().add(mapping);
+                dropZone.getDragMappings().add(mapping);
+            }
+
+            // Hotspot regions
+            for (HotspotRegionCreateRequest regionRequest :
+                    questionRequest.hotspotRegions()) {
+
+                HotspotRegion region = HotspotRegion.builder()
+                        .question(question)
+                        .xCoordinate(regionRequest.xCoordinate())
+                        .yCoordinate(regionRequest.yCoordinate())
+                        .width(regionRequest.width())
+                        .height(regionRequest.height())
+                        .build();
+
+                question.getHotspotRegions().add(region);
+            }
+
+            // Essay
+            if (questionRequest.essay() != null) {
+
+                EssayCreateRequest essayRequest =
+                        questionRequest.essay();
+
+                Essay essay = Essay.builder()
+                        .question(question)
+                        .maxWordCount(essayRequest.maxWordCount())
+                        .minWordCount(essayRequest.minWordCount())
+                        .gradingRubric(essayRequest.gradingRubric())
+                        .build();
+
+                question.setEssay(essay);
             }
 
             activity.getQuestions().add(question);
@@ -673,7 +822,7 @@ public class ActivityServiceImpl implements ActivityService {
 
         return getActivityById(savedActivity.getActivityId());
     }
-
+    
     private void validateQuestionData(
             QuestionCreateRequest request,
             ActivityType activityType) {
