@@ -465,22 +465,23 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ActivityDetailResponse getActivityById(Long activityId) {
 
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Activity not found with id: " + activityId
-                        ));
+                        )
+                );
 
         List<QuestionDetailResponse> questions =
-                activity.getQuestions()
-                        .stream()
+                activity.getQuestions().stream()
                         .map(question -> {
 
+                            // Options
                             List<OptionDetailResponse> options =
-                                    question.getOptions()
-                                            .stream()
+                                    question.getOptions().stream()
                                             .map(option -> new OptionDetailResponse(
                                                     option.getOptionId(),
                                                     option.getOptionText(),
@@ -489,6 +490,91 @@ public class ActivityServiceImpl implements ActivityService {
                                             ))
                                             .toList();
 
+                            // Fill blanks
+                            List<FillBlankDetailResponse> fillBlanks =
+                                    question.getFillBlanks().stream()
+                                            .map(blank -> new FillBlankDetailResponse(
+                                                    blank.getBlankId(),
+                                                    blank.getCorrectAnswer(),
+                                                    blank.getBlankIndex()
+                                            ))
+                                            .toList();
+
+                            // Matching pairs
+                            List<MatchingPairDetailResponse> matchingPairs =
+                                    question.getMatchingPairs().stream()
+                                            .map(pair -> new MatchingPairDetailResponse(
+                                                    pair.getPairId(),
+                                                    pair.getLeftItem(),
+                                                    pair.getRightItem(),
+                                                    pair.getDisplayOrder()
+                                            ))
+                                            .toList();
+
+                            // Sorting items
+                            List<SortingItemDetailResponse> sortingItems =
+                                    question.getSortingItems().stream()
+                                            .map(item -> new SortingItemDetailResponse(
+                                                    item.getItemId(),
+                                                    item.getItemText(),
+                                                    item.getCorrectOrder()
+                                            ))
+                                            .toList();
+
+                            // Drag items
+                            List<DragItemDetailResponse> dragItems =
+                                    question.getDragItems().stream()
+                                            .map(item -> new DragItemDetailResponse(
+                                                    item.getItemId(),
+                                                    item.getItemText(),
+                                                    item.getImageUrl()
+                                            ))
+                                            .toList();
+
+                            // Drop zones
+                            List<DropZoneDetailResponse> dropZones =
+                                    question.getDropZones().stream()
+                                            .map(zone -> new DropZoneDetailResponse(
+                                                    zone.getZoneId(),
+                                                    zone.getZoneLabel()
+                                            ))
+                                            .toList();
+
+                            // Drag mappings
+                            List<DragMappingDetailResponse> dragMappings =
+                                    question.getDragItems().stream()
+                                            .flatMap(item -> item.getDragMappings().stream())
+                                            .map(mapping -> new DragMappingDetailResponse(
+                                                    mapping.getMappingId(),
+                                                    mapping.getDragItem().getItemId(),
+                                                    mapping.getDropZone().getZoneId()
+                                            ))
+                                            .toList();
+
+                            // Hotspot regions
+                            List<HotspotRegionDetailResponse> hotspotRegions =
+                                    question.getHotspotRegions().stream()
+                                            .map(region -> new HotspotRegionDetailResponse(
+                                                    region.getRegionId(),
+                                                    region.getXCoordinate(),
+                                                    region.getYCoordinate(),
+                                                    region.getWidth(),
+                                                    region.getHeight()
+                                            ))
+                                            .toList();
+
+                            // Essay
+                            EssayDetailResponse essay = null;
+
+                            if (question.getEssay() != null) {
+                                essay = new EssayDetailResponse(
+                                        question.getEssay().getEssayId(),
+                                        question.getEssay().getMaxWordCount(),
+                                        question.getEssay().getMinWordCount(),
+                                        question.getEssay().getGradingRubric()
+                                );
+                            }
+
                             return new QuestionDetailResponse(
                                     question.getQuestionId(),
                                     question.getQuestionText(),
@@ -496,7 +582,15 @@ public class ActivityServiceImpl implements ActivityService {
                                     question.getImageUrl(),
                                     question.getPoints(),
                                     question.getDisplayOrder(),
-                                    options
+                                    options,
+                                    fillBlanks,
+                                    matchingPairs,
+                                    sortingItems,
+                                    dragItems,
+                                    dropZones,
+                                    dragMappings,
+                                    hotspotRegions,
+                                    essay
                             );
                         })
                         .toList();
