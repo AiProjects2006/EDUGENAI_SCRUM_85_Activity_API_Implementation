@@ -2,7 +2,6 @@ package com.ailearning.activity_service.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -25,8 +24,31 @@ public record QuestionCreateRequest(
         @Positive(message = "Display order must be positive")
         Integer displayOrder,
 
-        @NotEmpty(message = "At least one option is required")
         @Valid
-        List<OptionCreateRequest> options
+        List<OptionCreateRequest> options,
+
+        @Valid
+        List<FillBlankCreateRequest> fillBlanks,
+
+        @Valid
+        List<MatchingPairCreateRequest> matchingPairs,
+
+        @Valid
+        List<SortingItemCreateRequest> sortingItems,
+
+        @Valid
+        List<DragItemCreateRequest> dragItems,
+
+        @Valid
+        List<DropZoneCreateRequest> dropZones,
+
+        @Valid
+        List<DragMappingCreateRequest> dragMappings,
+
+        @Valid
+        List<HotspotRegionCreateRequest> hotspotRegions,
+
+        @Valid
+        EssayCreateRequest essay
 ) {
 }
