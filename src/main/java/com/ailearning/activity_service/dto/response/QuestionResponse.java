@@ -19,4 +19,27 @@ public class QuestionResponse {
     private Integer displayOrder;
 
     private List<OptionResponse> options;
+
+    private String correctAnswer;
+
+    private String activityType;
+
+    private String icon;
+
+    private List<String> categories;
+
+    private List<Object> items;
+
+    private List<String> itemsToOrder;
+
+    private String imageUrl;
+
+    private String passage;
+
+    private Integer timeLimitSeconds;
+
+    private String correctFeedback;
+
+    private String incorrectFeedback;
 }
+

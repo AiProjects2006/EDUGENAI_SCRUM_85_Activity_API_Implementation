@@ -25,6 +25,9 @@ public interface ActivityService {
 
     List<ActivityListResponse> getAllActivities();
 
+    List<ActivityListResponse> getAllActivities(Long moduleId);
+
+
     ActivityDetailResponse getActivityById(Long activityId);
 
     ActivityDetailResponse updateActivity(

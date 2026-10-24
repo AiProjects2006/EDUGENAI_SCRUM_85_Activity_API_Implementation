@@ -12,4 +12,7 @@ public class OptionResponse {
     private String optionText;
 
     private Integer displayOrder;
+
+    private Boolean correct;
 }
+

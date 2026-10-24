@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/activities")
+@RequestMapping({"/api/v1/activities", "/activities"})
 @RequiredArgsConstructor
 public class ActivityController {
 
@@ -78,10 +79,11 @@ public class ActivityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ActivityListResponse>> getAllActivities() {
+    public ResponseEntity<List<ActivityListResponse>> getAllActivities(
+            @RequestParam(required = false) Long moduleId) {
 
         return ResponseEntity.ok(
-                activityService.getAllActivities()
+                activityService.getAllActivities(moduleId)
         );
     }
 

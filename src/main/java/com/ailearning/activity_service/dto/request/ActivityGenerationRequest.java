@@ -14,6 +14,10 @@ public class ActivityGenerationRequest {
 
     private Long moduleId;
 
+    private String subject;
+
+    private String topic;
+
     private ActivityType activityType;
 
     private DifficultyLevel difficultyLevel;
